@@ -1,3 +1,4 @@
+const { GraphQLScalarType } = require('graphql')
 const retrieveUsers = require('./users')
 const retrievePhotos = require('./photos')
 const retrieveTags = require('./tags')
@@ -20,7 +21,8 @@ const resolvers = {
         postPhoto(parent, args) {
             let newPhoto = {
                 id: _id++,
-                ...args.input
+                ...args.input,
+                created: new Date()
             }
             photos.push(newPhoto)
             return newPhoto
@@ -38,12 +40,18 @@ const resolvers = {
             return photos.filter(p => p.githubUser === parent.githubLogin)
         },
         inPhotos: parent => tags
-                // Returns an array of tags that only contain the current user
                 .filter(tag => tag.userID === parent.id)
-                // Converts the array of tags into an array of photoIDs
                 .map(tag => tag.photoID)
-                // Converts array of photoIDs into an array of photo objects
                 .map(photoID => photos.find(p => p.id === photoID))
-    }
+    },
+
+    //create custom scalar type
+    DateTime: new GraphQLScalarType({
+        name:'DateTime',
+        description:'Valid date time value',
+        parseValue: value =>  new Date(value),
+        serialize: value => new Date(value).toISOString(),
+        parseLiteral: ast => ast
+    })
 }
 module.exports = resolvers 

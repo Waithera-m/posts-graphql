@@ -1,6 +1,7 @@
 const {gql } = require('apollo-server')
 
 const typeDefs = gql`
+    scalar DateTime
     enum PhotoCategory {
         SELFIE
         PORTRAIT
@@ -15,6 +16,7 @@ const typeDefs = gql`
         name: String!
         description: String
         category: PhotoCategory!
+        created: DateTime!
         postedBy: User!
         taggedUsers: [User!]!
     }

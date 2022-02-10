@@ -1,0 +1,1 @@
+Simple node + graphql app
